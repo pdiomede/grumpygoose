@@ -1,8 +1,5 @@
-# GOOSE - Governance Oversight & Operational Speed Evaluator
+# THE GRUMPY GOOSE - Governance Oversight & Operational Speed Evaluator
 # Python dependencies
-
-# Web framework
-flask==3.0.0
 
 # HTTP requests
 requests==2.31.0

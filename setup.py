@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GOOSE Setup Script
+THE GRUMPY GOOSE Setup Script
 Initializes the database and collects initial data
 """
 
@@ -12,7 +12,7 @@ from collectors.safe import collect_safe_data
 
 def main():
     print("=" * 60)
-    print("🪿 GOOSE Setup")
+    print("🪿 THE GRUMPY GOOSE Setup")
     print("Governance Oversight & Operational Speed Evaluator")
     print("=" * 60)
     print()
@@ -61,11 +61,10 @@ def main():
     print("=" * 60)
     print("✓ Setup complete!")
     print()
-    print("To start the dashboard, run:")
-    print("  python app.py")
+    print("To generate the static dashboard, run:")
+    print("  python generate_static.py")
     print()
-    print("Then open your browser to:")
-    print("  http://localhost:8080")
+    print("Then open index.html in your browser")
     print("=" * 60)
 
 

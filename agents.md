@@ -1,8 +1,8 @@
-# GOOSE 🪿 - Agent Capabilities
+# THE GRUMPY GOOSE 🪿 - Agent Capabilities
 
 ## Overview
 
-GOOSE is designed as a self-contained governance analytics tool that can be easily managed by autonomous agents. This document outlines the agent-friendly operations and automation capabilities.
+THE GRUMPY GOOSE is designed as a self-contained governance analytics tool that generates static HTML dashboards. This document outlines the agent-friendly operations and automation capabilities.
 
 ## Agent-Managed Operations
 
@@ -23,40 +23,46 @@ python -c "from database import update_member_names; update_member_names()"
 
 #### Scheduled Collection (Cron Jobs)
 ```bash
-# Every 4 hours - Update all data
-0 */4 * * * cd /path/to/goose && source venv/bin/activate && python setup.py
+# Every 4 hours - Update all data and regenerate static dashboard
+0 */4 * * * cd /path/to/grumpygoose && source venv/bin/activate && python setup.py && python generate_static.py
 
-# Daily - Council member updates
-0 9 * * * cd /path/to/goose && source venv/bin/activate && python -c "from database import update_member_names; update_member_names()"
+# Daily - Council member updates and regenerate dashboard
+0 9 * * * cd /path/to/grumpygoose && source venv/bin/activate && python -c "from database import update_member_names; update_member_names()" && python generate_static.py
 ```
 
 ### Monitoring & Alerting
 
-#### Health Check Endpoints
-- `GET /api/summary` - Verify data freshness and statistics
-- `GET /api/time-to-quorum` - Check metrics calculation
-- `GET /api/leaderboard` - Validate member data integration
-
-#### Automated Health Monitoring
+#### Health Check Script
 ```python
-import requests
+import os
 import sys
+from database import get_connection
 
 def health_check():
     try:
-        # Test API endpoints
-        summary = requests.get('http://localhost:8080/api/summary', timeout=10)
-        quorum = requests.get('http://localhost:8080/api/time-to-quorum', timeout=10)
-        leaderboard = requests.get('http://localhost:8080/api/leaderboard', timeout=10)
-
-        if summary.status_code == 200 and quorum.status_code == 200 and leaderboard.status_code == 200:
-            data = summary.json()
-            if data['total_votes'] > 0:  # Verify data exists
-                return True, "All systems operational"
-            else:
-                return False, "No data in database"
+        # Check if database exists and has data
+        if not os.path.exists('goose.db'):
+            return False, "Database file not found"
+        
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Check if we have data
+        cursor.execute("SELECT COUNT(*) FROM votes")
+        vote_count = cursor.fetchone()[0]
+        
+        cursor.execute("SELECT COUNT(*) FROM proposals")
+        proposal_count = cursor.fetchone()[0]
+        
+        cursor.execute("SELECT COUNT(*) FROM transactions")
+        transaction_count = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        if vote_count > 0 and (proposal_count > 0 or transaction_count > 0):
+            return True, f"OK: {vote_count} votes, {proposal_count} proposals, {transaction_count} transactions"
         else:
-            return False, "API endpoints not responding"
+            return False, "Database exists but contains no data"
     except Exception as e:
         return False, f"Health check failed: {e}"
 
@@ -66,6 +72,17 @@ if not status:
     sys.exit(1)
 else:
     print(f"OK: {message}")
+```
+
+#### Static File Generation Check
+```bash
+# Verify static HTML was generated successfully
+if [ -f "index.html" ] && [ -s "index.html" ]; then
+    echo "OK: Static dashboard generated"
+else
+    echo "ERROR: Static dashboard not found or empty"
+    exit 1
+fi
 ```
 
 ### Database Management
@@ -135,35 +152,21 @@ def push_metrics_to_monitoring(data):
 
 ### Deployment & Scaling
 
-#### Docker Containerization
-```dockerfile
-FROM python:3.11-slim
+#### Static File Generation
+```bash
+# Generate static HTML dashboard
+python generate_static.py
 
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-
-EXPOSE 8080
-CMD ["python", "app.py"]
+# Output: index.html (self-contained, ready to serve)
 ```
 
-#### Container Orchestration
-```yaml
-# docker-compose.yml
-version: '3.8'
-services:
-  goose:
-    build: .
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./goose.db:/app/goose.db
-      - ./council_members.csv:/app/council_members.csv
-    environment:
-      - FLASK_ENV=production
-    restart: unless-stopped
+#### Static File Deployment
+```bash
+# Copy generated file to web server
+cp index.html /path/to/web/server/
+
+# Or use any static hosting (GitHub Pages, Netlify, etc.)
+# No server-side dependencies required
 ```
 
 ## Autonomous Agent Capabilities
@@ -315,4 +318,4 @@ logging.basicConfig(
 }
 ```
 
-This agent-centric design enables autonomous operation, monitoring, and maintenance of the GOOSE governance analytics system.
+This agent-centric design enables autonomous operation, monitoring, and maintenance of THE GRUMPY GOOSE governance analytics system.

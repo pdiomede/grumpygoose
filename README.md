@@ -1,11 +1,11 @@
-# 🪿 GOOSE
+# 🪿 THE GRUMPY GOOSE
 **Governance Oversight & Operational Speed Evaluator**
 
-A lightweight dashboard for monitoring The Graph Council's responsiveness across Snapshot proposals and Safe multisig transactions.
+A lightweight static dashboard for monitoring The Graph Council's responsiveness across Snapshot proposals and Safe multisig transactions.
 
 ## 📋 Overview
 
-GOOSE tracks how quickly The Graph Council reaches quorum (6 of 10 signatures) and measures individual member response times. The dashboard displays time to quorum metrics, participation rates, and response times with council member names.
+THE GRUMPY GOOSE tracks how quickly The Graph Council reaches quorum (6 of 10 signatures) and measures individual member response times. The dashboard displays time to quorum metrics, participation rates, and response times with council member names.
 
 ## 🚀 Quick Start
 
@@ -16,11 +16,11 @@ pip install -r requirements.txt
 # Initialize database and collect data
 python setup.py
 
-# Start dashboard
-python app.py
+# Generate static HTML dashboard
+python generate_static.py
 ```
 
-Open **http://localhost:8080** to view the dashboard.
+Open **index.html** in your browser to view the dashboard.
 
 ## 📊 Key Features
 
@@ -39,29 +39,28 @@ Open **http://localhost:8080** to view the dashboard.
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python + Flask + SQLite
-- **Frontend**: Pure HTML/CSS/JavaScript (no frameworks)
+- **Backend**: Python + SQLite
+- **Frontend**: Static HTML/CSS (self-contained, no server required)
 - **Data APIs**: Snapshot GraphQL, Safe Transaction Service
 - **Branding**: The Graph official brand guidelines
 
 ## 📁 Project Structure
 
 ```
-goose/
-├── app.py                  # Flask application
-├── config.py              # Configuration settings
-├── database.py            # Database management
-├── metrics.py             # Metrics calculations
-├── council_lookup.py      # Council member name resolution
-├── council_members.csv    # Council directory
+grumpygoose/
+├── generate_static.py    # Static HTML generator
+├── config.py             # Configuration settings
+├── database.py           # Database management
+├── metrics.py            # Metrics calculations
+├── council_lookup.py     # Council member name resolution
+├── council_members.csv   # Council directory
 ├── collectors/
-│   ├── snapshot.py       # Snapshot data collector
-│   └── safe.py           # Safe multisig collector
-├── templates/
-│   └── index.html        # Dashboard
+│   ├── snapshot.py      # Snapshot data collector
+│   └── safe.py          # Safe multisig collector
 ├── static/
-│   └── style.css         # The Graph branding
-└── setup.py              # One-command setup
+│   └── style.css        # The Graph branding
+├── setup.py             # One-command setup
+└── index.html           # Generated static dashboard
 ```
 
 ## 📚 Documentation
